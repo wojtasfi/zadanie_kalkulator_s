@@ -2,6 +2,7 @@ package com.task.calculator.rest;
 
 import com.task.calculator.dto.SalaryDto;
 import com.task.calculator.dto.SalaryRequestDto;
+import com.task.calculator.service.CountryCostsInformationService;
 import com.task.calculator.service.SalaryCalculationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
@@ -22,11 +25,22 @@ public class CalculatorController {
     @Autowired
     private SalaryCalculationService salaryCalculationService;
 
+    @Autowired
+    private CountryCostsInformationService countryCostsInformationService;
+
     @RequestMapping(value = "/calculateSalary", method = POST)
     private SalaryDto calculateSalary(@RequestBody @Valid SalaryRequestDto salaryRequestDto) {
         LOGGER.info("Received request to calculate salary for {} with daily salary: {}", salaryRequestDto.getCountryCode(), salaryRequestDto.getDailyGrossSalary());
 
         return salaryCalculationService.calculateSalary(salaryRequestDto);
+
+    }
+
+    @RequestMapping(value = "countries", method = GET)
+    private List<String> getAvailableCountryCodes() {
+        LOGGER.info("Received request for available country codes");
+
+        return countryCostsInformationService.retrieveAllAvailableCountryCodes();
 
     }
 }

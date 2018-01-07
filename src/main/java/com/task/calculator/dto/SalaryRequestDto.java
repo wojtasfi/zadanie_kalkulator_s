@@ -4,6 +4,7 @@ import com.task.calculator.constraints.CountryCodeConstraint;
 
 import javax.validation.constraints.NotNull;
 
+
 public class SalaryRequestDto {
 
     @NotNull

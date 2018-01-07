@@ -10,6 +10,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
@@ -21,6 +22,9 @@ public class CalculatorApplication implements ApplicationRunner {
 
     @Autowired
     private CountryCostsInformationRepository countryCostsInformationRepository;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     public static void main(String[] args) {
         SpringApplication.run(CalculatorApplication.class, args);
@@ -43,7 +47,7 @@ public class CalculatorApplication implements ApplicationRunner {
         DE.setCountryCode("DE");
         DE.setCurrencyCode("EUR");
         DE.setFixedCosts(800);
-        DE.setIncomeTaxPercentage(0.20);
+        DE.setIncomeTaxPercentage(0.2);
 
         CountryCostsInformation PL = new CountryCostsInformation();
         PL.setCountryCode("PL");
@@ -51,7 +55,8 @@ public class CalculatorApplication implements ApplicationRunner {
         PL.setFixedCosts(1200);
         PL.setIncomeTaxPercentage(0.19);
 
-        LOGGER.info("Adding provided data");
+        String db = jdbcTemplate.getDataSource().getConnection().getMetaData().getUserName();
+        LOGGER.info("Adding provided data to {}", db);
         countryCostsInformationRepository.save(Arrays.asList(UK, DE, PL));
 
     }
