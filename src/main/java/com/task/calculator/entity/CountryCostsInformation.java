@@ -2,14 +2,12 @@ package com.task.calculator.entity;
 
 import com.task.calculator.constraints.CountryCodeConstraint;
 import com.task.calculator.constraints.CurrencyCodeConstraint;
-import org.springframework.format.annotation.NumberFormat;
+import com.task.calculator.constraints.IncomeTaxPercentageConstraint;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -28,10 +26,7 @@ public class CountryCostsInformation {
     private String currencyCode;
 
     @NotNull
-    @Max(100)
-    @Min(1)
-    @NumberFormat(style= NumberFormat.Style.PERCENT)
-//    @Pattern(regexp = "((\\d+)(\\.\\d{2}))$")
+    @IncomeTaxPercentageConstraint
     private Double incomeTaxPercentage;
 
     @NotNull
