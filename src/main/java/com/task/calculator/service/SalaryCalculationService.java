@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.Iterator;
 
 @Service
@@ -25,6 +26,8 @@ public class SalaryCalculationService {
     private static final Integer MONTH_IN_DAYS = 22;
     private static final String RATES_URL = "http://api.nbp.pl/api/exchangerates/rates/A/";
     private static final String LOCAL_CURRENCY = "PLN";
+    private static DecimalFormat decimalFormat = new DecimalFormat(".##");
+
 
 
     @Autowired
@@ -34,7 +37,7 @@ public class SalaryCalculationService {
     private RestTemplate restTemplate;
 
     @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
     public SalaryDto calculateSalary(SalaryRequestDto salaryRequestDto) {
         String countryCode = salaryRequestDto.getCountryCode();
@@ -55,15 +58,15 @@ public class SalaryCalculationService {
         }
         Double monthlySalaryMinusCosts = monthlyGrossSalary - fixedCosts;
 
-        Double monthlyNetSalary = monthlySalaryMinusCosts - (monthlySalaryMinusCosts * taxPercentage/100);
+        Double monthlyNetSalary = monthlySalaryMinusCosts - (monthlySalaryMinusCosts * taxPercentage);
 
-        Double salary = monthlyNetSalary * currentCurrRate;
+        Double salary = Double.valueOf(decimalFormat.format(monthlyNetSalary * currentCurrRate));
 
         return new SalaryDto(countryCode, salary);
     }
 
 
-    public Double getCurrentCurrencyRate(String currencyCode) throws IOException {
+    private Double getCurrentCurrencyRate(String currencyCode) throws IOException {
 
         if (currencyCode.equals(LOCAL_CURRENCY)) {
             return 1d;
