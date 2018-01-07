@@ -1,8 +1,10 @@
 package com.task.calculator;
 
 import com.task.calculator.dao.CountryCostsInformationRepository;
+import com.task.calculator.dto.CountryCostsInformationDto;
 import com.task.calculator.dto.SalaryDto;
 import com.task.calculator.dto.SalaryRequestDto;
+import com.task.calculator.entity.CountryCostsInformation;
 import com.task.calculator.service.CountryCostsInformationService;
 import com.task.calculator.service.CurrencyInformationService;
 import com.task.calculator.service.SalaryCalculationService;
@@ -63,5 +65,32 @@ public class CalculatorApplicationTests {
 
         //then
         assertTrue(countryCodes.containsAll(expectedCountryCodes));
+    }
+
+    @Test
+    public void addNewCostsInformation() {
+        //given
+        final CountryCostsInformationService countryService = new CountryCostsInformationService(repository);
+        String countryCode = "US";
+        String currencyCode = "USD";
+        Double taxPercentage = 0.24;
+        Integer fixedCosts = 250;
+
+        CountryCostsInformationDto countryCostsInformationDto = new CountryCostsInformationDto();
+        countryCostsInformationDto.setCountryCode(countryCode);
+        countryCostsInformationDto.setFixedCosts(fixedCosts);
+        countryCostsInformationDto.setCurrencyCode(currencyCode);
+        countryCostsInformationDto.setIncomeTaxPercentage(taxPercentage);
+
+        //when
+        countryService.addNewCountryCodeInformation(countryCostsInformationDto);
+        CountryCostsInformation countryInfo = repository.findByCountryCode(countryCode);
+
+        //then
+        assertEquals(countryInfo.getCountryCode(), countryCode);
+        assertEquals(countryInfo.getCurrencyCode(), currencyCode);
+        assertEquals(countryInfo.getIncomeTaxPercentage(), taxPercentage);
+        assertEquals(countryInfo.getFixedCosts(), fixedCosts);
+
     }
 }
