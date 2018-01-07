@@ -6,7 +6,6 @@ import com.task.calculator.dto.SalaryRequestDto;
 import com.task.calculator.service.CountryCostsInformationService;
 import com.task.calculator.service.CurrencyInformationService;
 import com.task.calculator.service.SalaryCalculationService;
-import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -14,7 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
@@ -41,6 +44,7 @@ public class CalculatorApplicationTests {
         salaryRequestDto.setCountryCode(countryCode);
         salaryRequestDto.setDailyGrossSalary(dailyGrossSalary);
 
+        //when
         doReturn(rate).when(currencyService).getCurrentCurrencyRate(Mockito.anyString());
         SalaryDto salaryDto = salaryCalculationService.calculateSalary(salaryRequestDto);
 
@@ -48,9 +52,16 @@ public class CalculatorApplicationTests {
         assertEquals(expectedSalary, salaryDto.getSalary());
     }
 
-    @After
-    public void clear() {
-        repository.deleteAll();
-    }
+    @Test
+    public void getAllCountryCodes() {
+        //given
+        final CountryCostsInformationService countryService = new CountryCostsInformationService(repository);
+        List<String> expectedCountryCodes = Arrays.asList("UK", "PL", "DE");
 
+        //when
+        List<String> countryCodes = countryService.retrieveAllAvailableCountryCodes();
+
+        //then
+        assertTrue(countryCodes.containsAll(expectedCountryCodes));
+    }
 }
