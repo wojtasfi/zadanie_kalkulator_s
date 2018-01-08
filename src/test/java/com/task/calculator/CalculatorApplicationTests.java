@@ -2,7 +2,6 @@ package com.task.calculator;
 
 import com.task.calculator.dao.CountryCostsInformationRepository;
 import com.task.calculator.dto.CountryCostsInformationDto;
-import com.task.calculator.dto.SalaryDto;
 import com.task.calculator.dto.SalaryRequestDto;
 import com.task.calculator.entity.CountryCostsInformation;
 import com.task.calculator.service.CountryCostsInformationService;
@@ -48,10 +47,10 @@ public class CalculatorApplicationTests {
 
         //when
         doReturn(rate).when(currencyService).getCurrentCurrencyRate(Mockito.anyString());
-        SalaryDto salaryDto = salaryCalculationService.calculateSalary(salaryRequestDto);
+        Double salary = salaryCalculationService.calculateSalary(salaryRequestDto);
 
         //then
-        assertEquals(expectedSalary, salaryDto.getSalary());
+        assertEquals(expectedSalary, salary);
     }
 
     @Test
