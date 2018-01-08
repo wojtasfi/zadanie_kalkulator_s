@@ -1,6 +1,5 @@
 package com.task.calculator.service;
 
-import com.task.calculator.dto.SalaryDto;
 import com.task.calculator.dto.SalaryRequestDto;
 import com.task.calculator.entity.CountryCostsInformation;
 import com.task.calculator.rest.CalculatorController;
@@ -31,7 +30,7 @@ public class SalaryCalculationService {
         this.currencyInformationService = currencyInformationService;
     }
 
-    public SalaryDto calculateSalary(SalaryRequestDto salaryRequestDto) {
+    public Double calculateSalary(SalaryRequestDto salaryRequestDto) {
         String countryCode = salaryRequestDto.getCountryCode();
 
         Double monthlyGrossSalary = salaryRequestDto.getDailyGrossSalary() * MONTH_IN_DAYS;
@@ -54,7 +53,7 @@ public class SalaryCalculationService {
 
         Double salary = Double.valueOf(decimalFormat.format(monthlyNetSalary * currentCurrRate));
 
-        return new SalaryDto(countryCode, salary);
+        return salary;
     }
 
 

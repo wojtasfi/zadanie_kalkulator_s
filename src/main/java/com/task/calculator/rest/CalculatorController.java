@@ -1,7 +1,6 @@
 package com.task.calculator.rest;
 
 import com.task.calculator.dto.CountryCostsInformationDto;
-import com.task.calculator.dto.SalaryDto;
 import com.task.calculator.dto.SalaryRequestDto;
 import com.task.calculator.service.CountryCostsInformationService;
 import com.task.calculator.service.SalaryCalculationService;
@@ -10,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +20,7 @@ import java.util.List;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("calculator")
 public class CalculatorController {
@@ -32,11 +33,24 @@ public class CalculatorController {
     private CountryCostsInformationService countryCostsInformationService;
 
     @RequestMapping(value = "/calculateSalary", method = POST)
-    private SalaryDto calculateSalary(@RequestBody @Valid SalaryRequestDto salaryRequestDto) {
+    private ResponseEntity<String> calculateSalary(@RequestBody @Valid SalaryRequestDto salaryRequestDto) {
         LOGGER.info("Received request to calculate salary for {} with daily salary: {}", salaryRequestDto.getCountryCode(), salaryRequestDto.getDailyGrossSalary());
 
-        return salaryCalculationService.calculateSalary(salaryRequestDto);
+        ResponseEntity<String> response;
+        String body;
+        if (countryExists(salaryRequestDto)) {
+            String salary = salaryCalculationService.calculateSalary(salaryRequestDto).toString();
+            response = new ResponseEntity<>(salary, HttpStatus.OK);
+        } else {
+            body = "Country " + salaryRequestDto.getCountryCode() + " does not exists";
+            response = new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+        }
+        return response;
 
+    }
+
+    private boolean countryExists(SalaryRequestDto salaryRequestDto) {
+        return countryCostsInformationService.findByCountryCode(salaryRequestDto.getCountryCode()) != null;
     }
 
     @RequestMapping(value = "countries", method = GET)
