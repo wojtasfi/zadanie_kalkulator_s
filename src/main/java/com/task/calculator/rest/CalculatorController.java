@@ -9,10 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -58,6 +55,14 @@ public class CalculatorController {
         LOGGER.info("Received request for available country codes");
 
         return countryCostsInformationService.retrieveAllAvailableCountryCodes();
+
+    }
+
+    @RequestMapping(value = "currencyCode", method = GET)
+    private String getCurrencyCode(@RequestParam String countryCode) {
+        LOGGER.info("Received request currency code for country code: {}", countryCode);
+
+        return countryCostsInformationService.retrieveCurrencyCode(countryCode);
 
     }
 

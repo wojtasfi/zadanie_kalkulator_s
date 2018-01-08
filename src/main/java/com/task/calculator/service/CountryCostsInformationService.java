@@ -52,4 +52,9 @@ public class CountryCostsInformationService {
 
         return existingCodes.contains(dto.getCountryCode());
     }
+
+    public String retrieveCurrencyCode(String countryCode) {
+
+        return countryCostsInformationRepository.findByCountryCode(countryCode).getCurrencyCode();
+    }
 }
