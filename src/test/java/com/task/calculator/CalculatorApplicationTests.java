@@ -92,4 +92,18 @@ public class CalculatorApplicationTests {
         assertEquals(countryInfo.getFixedCosts(), fixedCosts);
 
     }
+
+    @Test
+    public void getCurrencyCode() {
+        //given
+        final CountryCostsInformationService countryService = new CountryCostsInformationService(repository);
+        String countryCode = "UK";
+        String expectedCurrencyCode = "GBP";
+
+        //when
+        String currencyCode = countryService.retrieveCurrencyCode(countryCode);
+
+        //then
+        assertEquals(expectedCurrencyCode, currencyCode);
+    }
 }
