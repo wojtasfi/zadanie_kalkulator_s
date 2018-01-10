@@ -47,6 +47,8 @@ public class SalaryCalculationService {
         } catch (Exception e) {
             LOGGER.error("Error occurred when retrieving currency rate for {}", currencyCode, e);
         }
+
+        LOGGER.info("Received currency rate for {}: {}", countryCode, currentCurrRate);
         Double monthlySalaryMinusCosts = monthlyGrossSalary - fixedCosts;
 
         Double monthlyNetSalary = monthlySalaryMinusCosts - (monthlySalaryMinusCosts * taxPercentage);

@@ -1,6 +1,7 @@
 package com.task.calculator.rest;
 
 import com.task.calculator.dto.CountryCostsInformationDto;
+import com.task.calculator.dto.CountryCostsInformationUpdateDto;
 import com.task.calculator.dto.SalaryRequestDto;
 import com.task.calculator.service.CountryCostsInformationService;
 import com.task.calculator.service.SalaryCalculationService;
@@ -14,8 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -73,7 +73,7 @@ public class CalculatorController {
 
         ResponseEntity<String> response;
         String body;
-        if (!countryCostsInformationService.checkIfAlreadyExists(dto)) {
+        if (!countryCostsInformationService.checkIfExists(dto.getCountryCode())) {
             countryCostsInformationService.addNewCountryCodeInformation(dto);
             body = "New costs information has been created";
             response = new ResponseEntity<>(body, HttpStatus.CREATED);
@@ -81,6 +81,29 @@ public class CalculatorController {
         }
 
         body = "Costs information for " + dto.getCountryCode() + " already exists";
+        response = new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+        return response;
+
+    }
+
+    @RequestMapping(value = "updateCountryCostsInformation", method = PUT)
+    private ResponseEntity<String> updateCountryCostsInformation(
+            @RequestParam String countryCode,
+            @RequestBody @Valid CountryCostsInformationUpdateDto dto) {
+
+        LOGGER.info("Received request for update CountryCostsInformation for country {} with countryCode: {}, currencyCode: {}, fixedCosts: {}, incomeTax {}",
+                countryCode, dto.getCountryCode(), dto.getCurrencyCode(), dto.getFixedCosts(), dto.getIncomeTaxPercentage());
+
+        ResponseEntity<String> response;
+        String body;
+        if (countryCostsInformationService.checkIfExists(countryCode)) {
+            countryCostsInformationService.updateCountryCodeInformation(countryCode, dto);
+            body = "Costs information for " + countryCode + " has been updated";
+            response = new ResponseEntity<>(body, HttpStatus.OK);
+            return response;
+        }
+
+        body = "Costs information for " + countryCode + " does not exists";
         response = new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         return response;
 
