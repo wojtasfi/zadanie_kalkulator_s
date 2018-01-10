@@ -2,6 +2,7 @@ package com.task.calculator;
 
 import com.task.calculator.dao.CountryCostsInformationRepository;
 import com.task.calculator.dto.CountryCostsInformationDto;
+import com.task.calculator.dto.CountryCostsInformationUpdateDto;
 import com.task.calculator.dto.SalaryRequestDto;
 import com.task.calculator.entity.CountryCostsInformation;
 import com.task.calculator.service.CountryCostsInformationService;
@@ -105,5 +106,30 @@ public class CalculatorApplicationTests {
 
         //then
         assertEquals(expectedCurrencyCode, currencyCode);
+    }
+
+
+    @Test
+    public void updateCostsInformation() {
+        //given
+        final CountryCostsInformationService countryService = new CountryCostsInformationService(repository);
+        String countryCode = "UK";
+
+        Double updatedTaxPercentage = 0.20;
+        Integer updatedFixedCosts = 250;
+
+        CountryCostsInformationUpdateDto updateDto = new CountryCostsInformationUpdateDto();
+
+        updateDto.setIncomeTaxPercentage(updatedTaxPercentage);
+        updateDto.setFixedCosts(updatedFixedCosts.toString());
+
+        //when
+        countryService.updateCountryCodeInformation(countryCode, updateDto);
+        CountryCostsInformation countryInfo = repository.findByCountryCode(countryCode);
+
+        //then
+        assertEquals(countryInfo.getIncomeTaxPercentage(), updatedTaxPercentage);
+        assertEquals(countryInfo.getFixedCosts(), updatedFixedCosts);
+
     }
 }
